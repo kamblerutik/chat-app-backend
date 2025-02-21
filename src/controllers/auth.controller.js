@@ -1,10 +1,12 @@
+const { generateToken } = require("../Authentication/Token");
 const userModel = require("../models/user.model");
+const bcrypt = require("bcryptjs");
 
 const register = async (req, res) => {
     try {
         const { username, email, password } = req.body;
 
-        // Check if username is already taken
+
         const isUsernameTaken = await userModel.findOne({ username });
         if (isUsernameTaken) {
             return res.status(400).json({
@@ -13,7 +15,7 @@ const register = async (req, res) => {
             });
         }
 
-        // Check if email is already taken
+
         const isEmailTaken = await userModel.findOne({ email });
         if (isEmailTaken) {
             return res.status(400).json({
@@ -22,11 +24,15 @@ const register = async (req, res) => {
             });
         }
 
-        // Create a new user
+        const salt = 10;
+        const hashedPassword = await bcrypt.hash(password, salt)
+
+
         const user = await userModel.create({
             username,
             email,
-            password
+            password: hashedPassword,
+            profileUrl: ""
         });
 
         if (user) {
@@ -57,15 +63,14 @@ const login = async(req, res) => {
             })
         }
 
-        if (user.password === password) {
+        const checkPassword = bcrypt.compare(password, user.password)
+
+        if (checkPassword) {
+            const token = generateToken({id: user._id, username: user.username})
             res.status(200).json({
                 status: true,
-                message: "user logged in!"
-            })
-        }else {
-            res.status(400).json({
-                status: false,
-                message: "invalid credentials!"
+                token,
+                message: "logged in"
             })
         }
 
