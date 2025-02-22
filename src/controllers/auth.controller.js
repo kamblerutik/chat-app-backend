@@ -70,7 +70,8 @@ const login = async(req, res) => {
             res.status(200).json({
                 status: true,
                 token,
-                message: "logged in"
+                message: "logged in",
+                path: user.profileUrl ? "/home" : "/avatar"
             })
         }
 
