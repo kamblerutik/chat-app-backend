@@ -6,6 +6,8 @@ const register = async (req, res) => {
     try {
         const { username, email, password } = req.body;
 
+        const avatar = `https://avatar.iran.liara.run/public/boy?username=${username}`
+
 
         const isUsernameTaken = await userModel.findOne({ username });
         if (isUsernameTaken) {
@@ -32,7 +34,7 @@ const register = async (req, res) => {
             username,
             email,
             password: hashedPassword,
-            profileUrl: ""
+            profileUrl: avatar
         });
 
         if (user) {
