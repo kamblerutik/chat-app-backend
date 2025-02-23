@@ -68,12 +68,11 @@ const login = async(req, res) => {
         const checkPassword = bcrypt.compare(password, user.password)
 
         if (checkPassword) {
-            const token = generateToken({id: user._id, username: user.username})
+            const token = generateToken({id: user._id})
             res.status(200).json({
                 status: true,
                 token,
                 message: "logged in",
-                path: user.profileUrl ? "/home" : "/avatar"
             })
         }
 
