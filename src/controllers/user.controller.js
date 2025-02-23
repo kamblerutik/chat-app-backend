@@ -27,4 +27,30 @@ const getUserById = async(req, res) => {
     }
 }
 
-module.exports = {getUserById}
+const getAllUsers = async(req, res) => {
+    try {
+        const user = await userModel.find().select("-password")
+
+        if (user) {
+            res.status(200).json({
+                status: true,
+                message: "user founded",
+                user
+            })
+        }else {
+            res.status(404).json({
+                status: false,
+                message: "user not found",
+                user
+            })
+        }
+
+    } catch (error) {
+        console.log(error);
+        
+    }
+}
+
+
+
+module.exports = {getUserById, getAllUsers}
